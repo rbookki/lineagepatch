@@ -134,7 +134,7 @@ export function createFixtureMcpServer() {
     annotations: { readOnlyHint: true },
   }, async ({ urn, start, count }) => {
     const incident = findIncident(urn);
-    const field = incident.id === "INC-2048" ? "customer_email" : incident.id === "INC-2045" ? "loaded_at" : "cardholder_email";
+    const field = incident.id === "INC-2048" ? "cust_email" : incident.id === "INC-2045" ? "loaded_at" : "cardholder_email";
     const queries = Array.from({ length: Math.min(count, incident.id === "INC-2048" ? 11 : 4) }, (_, index) => ({
       urn: `urn:li:query:lineagepatch-${incident.id.toLowerCase()}-${index + start}`,
       properties: {

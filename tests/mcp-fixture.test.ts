@@ -47,6 +47,6 @@ describe("DataHub-compatible MCP fixture", () => {
 
     expect(payload.direction).toBe("DOWNSTREAM");
     expect(payload.nodes).toHaveLength(6);
-    expect(payload.explanation).toContain("customer_email");
+    expect(payload.explanation).toContain("cust_email");
   });
 });

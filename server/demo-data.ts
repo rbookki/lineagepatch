@@ -66,9 +66,9 @@ export function createDemoAnalysis(incident: Incident): AnalysisResult {
     blastRadius: { assets: 6, critical: 2, owners: 3 },
     confidence: 92,
     explanation:
-      "The source column customer_email was replaced by email_address without a compatibility alias. DataHub lineage shows two direct models and four transitive consumers. The customer_features model is the highest-risk path because it feeds both the churn model and the executive retention dashboard.",
+      "The source column cust_email was replaced by email_address without a compatibility alias. DataHub lineage shows two direct models and four transitive consumers. The customer_features model is the highest-risk path because it feeds both the churn model and the executive retention dashboard.",
     recommendation:
-      "Add a compatibility alias at the staging boundary, update the schema contract, and run targeted tests before promoting the rename downstream. Keep both fields for one release window, then deprecate customer_email after consumers migrate.",
+      "Add a compatibility alias at the staging boundary, update the schema contract, and run targeted tests before promoting the rename downstream. Keep both fields for one release window, then deprecate cust_email after consumers migrate.",
     nodes: [
       { id: "source", label: "customer_360", kind: "source", platform: "Snowflake", risk: "source", x: 4, y: 42 },
       { id: "staging", label: "stg_customers", kind: "model", platform: "dbt", risk: "affected", x: 31, y: 18 },
@@ -89,7 +89,7 @@ export function createDemoAnalysis(incident: Incident): AnalysisResult {
       { tool: "get_entities", label: "Resolved source metadata", detail: "Schema, owners, domains and assertions loaded", status: "complete", durationMs: 184 },
       { tool: "list_schema_fields", label: "Compared schema versions", detail: "Detected one renamed governed field", status: "warning", durationMs: 126 },
       { tool: "get_lineage", label: "Traced downstream impact", detail: "6 assets across 3 platforms and 3 owners", status: "complete", durationMs: 241 },
-      { tool: "get_dataset_queries", label: "Inspected usage evidence", detail: "Found 11 queries referencing customer_email", status: "complete", durationMs: 209 },
+      { tool: "get_dataset_queries", label: "Inspected usage evidence", detail: "Found 11 queries referencing cust_email", status: "complete", durationMs: 209 },
       { tool: "save_document", label: "Prepared incident memory", detail: "Ready to publish after human approval", status: "complete", durationMs: 92 },
     ],
     patches: [

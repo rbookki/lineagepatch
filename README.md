@@ -3,6 +3,7 @@
 [![CI](https://github.com/rbookki/lineagepatch/actions/workflows/ci.yml/badge.svg)](https://github.com/rbookki/lineagepatch/actions/workflows/ci.yml)
 [![License](https://img.shields.io/badge/license-Apache--2.0-2f6f59)](LICENSE)
 [![DataHub](https://img.shields.io/badge/DataHub-MCP%20Server-6d3cff)](https://docs.datahub.com/docs/features/feature-guides/mcp)
+[![Live demo](https://img.shields.io/badge/live_demo-open-0b6b50)](https://lineagepatch.onrender.com)
 
 **From broken data contract to an explainable, reviewable patch.**
 
@@ -48,6 +49,8 @@ Then open `http://127.0.0.1:4174`.
 [![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/rbookki/lineagepatch)
 
 The hosted configuration runs the offline MCP fixture and requires no credentials.
+
+Public demo: [lineagepatch.onrender.com](https://lineagepatch.onrender.com)
 
 ## Run with DataHub Core
 
