@@ -1,0 +1,16 @@
+version: 2
+
+models:
+  - name: stg_customers
+    columns:
+      - name: customer_id
+        tests:
+          - not_null
+          - unique
+      - name: email_address
+        tests:
+          - not_null
+        meta:
+          contains_pii: true
+      - name: cust_email
+        description: Deprecated compatibility alias; remove after downstream migration.
