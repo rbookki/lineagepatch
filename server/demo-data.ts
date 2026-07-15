@@ -127,7 +127,7 @@ export function createDemoAnalysis(incident: Incident): AnalysisResult {
     ],
   };
 
-  if (incident.id === "INC-2045") {
+  if (incident.source.endsWith(".orders")) {
     result.blastRadius = { assets: 4, critical: 1, owners: 2 };
     result.confidence = 89;
     result.context = { fieldsInspected: 4, queryReferences: 4, platforms: 3, observedFields: ["order_id", "customer_id", "order_total", "loaded_at"] };
@@ -170,7 +170,7 @@ export function createDemoAnalysis(incident: Incident): AnalysisResult {
     }];
   }
 
-  if (incident.id === "INC-2039") {
+  if (incident.source.endsWith(".addresses")) {
     result.blastRadius = { assets: 3, critical: 1, owners: 2 };
     result.confidence = 95;
     result.context = { fieldsInspected: 3, queryReferences: 4, platforms: 3, observedFields: ["payment_id", "cardholder_email", "amount"] };

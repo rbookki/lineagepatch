@@ -25,6 +25,8 @@ LineagePatch is a metadata-aware incident response workflow powered by DataHub c
 - Generates a reviewable dbt or configuration patch
 - Packages the proposed code as a downloadable patch for repository review
 - Publishes an approved evidence summary back to DataHub as searchable incident memory
+- Connects incidents to a cross-platform context graph, policy controls, and searchable run history
+- Accepts validated incident reports and routes them directly into source-specific analysis
 
 Every recommendation includes an evidence trail. Read-only investigation runs automatically; the write-back path requires both a server-side mutation gate and a second approval in the product.
 
@@ -53,6 +55,7 @@ We addressed this by separating read-only investigation from mutation, linking e
 - A complete read-reason-write loop using the official MCP Server
 - Human-approved DataHub incident memory that later investigations can retrieve
 - Three distinct incident types: schema drift, freshness breach, and governance propagation
+- Complete context graph, policy control, run history, and settings workspaces
 - Interactive table and column lineage impact visualization
 - Incident-specific patch generation with human approval controls
 - Downloadable patch bundles and committed sample outputs for judge review
@@ -81,3 +84,5 @@ DataHub, DataHub Core, DataHub MCP Server, Model Context Protocol (MCP), TypeScr
 2. `media/03-reviewable-patch.png` - Human-reviewable remediation diff
 3. `media/04-evidence-trail.png` - Traceable DataHub MCP evidence trail
 4. `media/01-incident-overview.png` - Incident operations workspace
+5. `media/05-context-graph.png` - Filterable cross-platform catalog context
+6. `media/06-policy-controls.png` - Governed controls and linked incident review

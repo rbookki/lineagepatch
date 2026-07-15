@@ -8,7 +8,7 @@ function findIncident(urn: string) {
 
 function schemaFieldsFor(urn: string) {
   const incident = findIncident(urn);
-  if (incident.id === "INC-2045") {
+  if (incident.source.endsWith(".orders")) {
     return [
       { fieldPath: "order_id", nativeDataType: "STRING", nullable: false },
       { fieldPath: "customer_id", nativeDataType: "STRING", nullable: false },
@@ -16,7 +16,7 @@ function schemaFieldsFor(urn: string) {
       { fieldPath: "loaded_at", nativeDataType: "TIMESTAMP", nullable: false },
     ];
   }
-  if (incident.id === "INC-2039") {
+  if (incident.source.endsWith(".addresses")) {
     return [
       { fieldPath: "payment_id", nativeDataType: "STRING", nullable: false },
       { fieldPath: "cardholder_email", nativeDataType: "STRING", nullable: true, glossaryTerms: [] },
@@ -134,8 +134,8 @@ export function createFixtureMcpServer() {
     annotations: { readOnlyHint: true },
   }, async ({ urn, start, count }) => {
     const incident = findIncident(urn);
-    const field = incident.id === "INC-2048" ? "cust_email" : incident.id === "INC-2045" ? "loaded_at" : "cardholder_email";
-    const queries = Array.from({ length: Math.min(count, incident.id === "INC-2048" ? 11 : 4) }, (_, index) => ({
+    const field = incident.source.endsWith(".orders") ? "loaded_at" : incident.source.endsWith(".addresses") ? "cardholder_email" : "cust_email";
+    const queries = Array.from({ length: Math.min(count, incident.source.endsWith(".customers") ? 11 : 4) }, (_, index) => ({
       urn: `urn:li:query:lineagepatch-${incident.id.toLowerCase()}-${index + start}`,
       properties: {
         statement: { value: `select ${field} from ${incident.source}`, language: "SQL" },

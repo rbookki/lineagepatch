@@ -29,7 +29,7 @@ export interface LineageEdge {
   to: string;
 }
 
-export interface AgentStep {
+export interface EvidenceStep {
   tool: string;
   label: string;
   detail: string;
@@ -49,7 +49,7 @@ export interface AnalysisResult {
   incident: Incident;
   nodes: LineageNode[];
   edges: LineageEdge[];
-  steps: AgentStep[];
+  steps: EvidenceStep[];
   patches: PatchFile[];
   blastRadius: {
     assets: number;

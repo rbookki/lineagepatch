@@ -26,6 +26,22 @@ LineagePatch turns that investigation into one guarded workflow:
 
 The live showcase analysis finds **41 downstream assets across seven platforms**, including three critical paths and 14 owner identities.
 
+## Complete workspace
+
+The application is more than the incident detail screen:
+
+- **Incidents:** search and severity filters, incident reporting, impact analysis, patch review, evidence, and guarded write-back.
+- **Context graph:** a filterable cross-platform catalog map that links affected datasets, transformations, dashboards, and ML features back to their incidents.
+- **Policies:** active controls, breach status, enforcement checks, policy toggles, and linked incident review.
+- **Run history:** searchable provider-aware run records with duration, blast radius, and result reopening.
+- **Settings:** connection testing, browser-persisted workspace preferences, and visible safety boundaries.
+
+Newly reported incidents are validated by the API, added to the active workspace, and analyzed according to their selected source scenario. Completed analyses are also added to run history for the current session.
+
+![LineagePatch cross-platform context graph](media/05-context-graph.png)
+
+![LineagePatch policy controls workspace](media/06-policy-controls.png)
+
 ## Thirty-second demo
 
 Node.js 20 or newer is the only requirement for the offline judge experience.
@@ -71,7 +87,7 @@ npm run dev
 
 DataHub opens at `http://localhost:9002` with local Quickstart credentials `datahub` / `datahub`. LineagePatch reads the GMS URL and short-lived token from `~/.datahubenv`, launches the official MCP server over stdio, and keeps the token on the server.
 
-If DataHub is configured but temporarily unavailable, analysis explicitly falls back to the fixture instead of breaking the demo.
+If DataHub is configured but temporarily unavailable, analysis falls back to the fixture after a short connection timeout instead of leaving the interface waiting indefinitely.
 
 ## Approved write-back
 
@@ -156,7 +172,7 @@ npm test
 npm run build
 ```
 
-The repository includes unit tests for incident-specific planning, MCP negotiation, lineage responses, and the approved incident-memory artifact. GitHub Actions runs the same checks for every pull request.
+The repository includes unit tests for incident-specific planning, newly reported source scenarios, MCP negotiation, lineage responses, and the approved incident-memory artifact. GitHub Actions runs the same checks for every pull request.
 
 ## Project structure
 

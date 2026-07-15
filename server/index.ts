@@ -9,7 +9,7 @@ import { DataHubMcpClient } from "./datahub-mcp.js";
 import { createFixtureMcpServer } from "./mcp-fixture.js";
 import { analyzeIncidentViaMcp } from "./mcp-analysis.js";
 import { publishIncidentMemory } from "./incident-memory.js";
-import type { AnalysisResult, PublishResult } from "../src/types.js";
+import type { AnalysisResult, Incident, PublishResult } from "../src/types.js";
 
 try {
   process.loadEnvFile();
@@ -25,6 +25,20 @@ const distDir = path.resolve(currentDir, "../dist");
 const fixtureMcpUrl = `http://127.0.0.1:${port}/mcp/fixture`;
 const analysisCache = new Map<string, AnalysisResult>();
 const publishedMemories = new Map<string, PublishResult>();
+
+async function withTimeout<T>(promise: Promise<T>, milliseconds: number, message: string): Promise<T> {
+  let timeout: ReturnType<typeof setTimeout> | undefined;
+  try {
+    return await Promise.race([
+      promise,
+      new Promise<T>((_resolve, reject) => {
+        timeout = setTimeout(() => reject(new Error(message)), milliseconds);
+      }),
+    ]);
+  } finally {
+    if (timeout) clearTimeout(timeout);
+  }
+}
 
 app.use(express.json({ limit: "1mb" }));
 
@@ -73,6 +87,45 @@ app.get("/api/bootstrap", (_req, res) => {
   res.json({ incidents, connection: connection() });
 });
 
+app.post("/api/incidents", (req, res) => {
+  const parsed = z.object({
+    title: z.string().trim().min(4).max(90),
+    summary: z.string().trim().min(8).max(240),
+    source: z.enum([
+      "postgres.order_entry.customers",
+      "postgres.order_entry.orders",
+      "postgres.order_entry.addresses",
+    ]),
+    severity: z.enum(["critical", "high", "medium"]),
+    owner: z.string().trim().min(2).max(60),
+    signal: z.string().trim().min(3).max(90),
+  }).safeParse(req.body);
+
+  if (!parsed.success) {
+    return res.status(400).json({ error: "Complete every incident field with a valid value." });
+  }
+
+  const template = incidents.find((item) => item.source === parsed.data.source);
+  if (!template) return res.status(400).json({ error: "The selected source is not available." });
+
+  const nextNumber = Math.max(...incidents.map((item) => Number(item.id.replace("INC-", "")) || 0)) + 1;
+  const incident: Incident = {
+    id: `INC-${nextNumber}`,
+    title: parsed.data.title,
+    summary: parsed.data.summary,
+    source: parsed.data.source,
+    severity: parsed.data.severity,
+    status: "ready",
+    detectedAt: new Date().toISOString(),
+    assetUrn: template.assetUrn,
+    owner: parsed.data.owner,
+    signal: parsed.data.signal,
+  };
+
+  incidents.unshift(incident);
+  return res.status(201).json(incident);
+});
+
 app.post("/api/analyze", async (req, res) => {
   const parsed = z.object({ incidentId: z.string() }).safeParse(req.body);
   if (!parsed.success) {
@@ -87,11 +140,15 @@ app.post("/api/analyze", async (req, res) => {
     let result: AnalysisResult;
     if (resolved) {
       try {
-        result = await analyzeIncidentViaMcp(
-          incident,
-          resolved.config,
-          "datahub-mcp",
-          process.env.DATAHUB_MCP_MUTATIONS === "true",
+        result = await withTimeout(
+          analyzeIncidentViaMcp(
+            incident,
+            resolved.config,
+            "datahub-mcp",
+            process.env.DATAHUB_MCP_MUTATIONS === "true",
+          ),
+          3500,
+          "Live DataHub did not respond within 3.5 seconds.",
         );
       } catch (error) {
         console.warn("Live DataHub analysis unavailable; using the MCP fixture.", error instanceof Error ? error.message : error);
@@ -152,7 +209,7 @@ app.post("/api/datahub/test", async (_req, res) => {
   const config = resolved?.config ?? { transport: "http" as const, url: fixtureMcpUrl };
   const client = new DataHubMcpClient(config);
   try {
-    const tools = await client.connect();
+    const tools = await withTimeout(client.connect(), 3500, "The configured DataHub endpoint did not respond within 3.5 seconds.");
     return res.json({
       ok: true,
       endpoint: config.transport === "stdio" ? "local stdio" : new URL(config.url).host,

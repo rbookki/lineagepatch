@@ -20,4 +20,16 @@ describe("incident analysis", () => {
     expect(results[1].nodes.map((node) => node.label)).toContain("orders_daily");
     expect(results[2].patches[0].diff.join("\n")).toContain("data_classification: pii");
   });
+
+  it("uses the selected source for newly reported incidents", () => {
+    const reportedIncident = {
+      ...incidents[1],
+      id: "INC-2050",
+      title: "New orders freshness report",
+    };
+    const result = analyzeIncident(reportedIncident);
+
+    expect(result.nodes.map((node) => node.label)).toContain("orders_daily");
+    expect(result.patches[0].diff.join("\n")).toContain("freshness");
+  });
 });
